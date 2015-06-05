@@ -150,7 +150,6 @@ sub remove_user
 {
     my $self = shift;
     my $username = shift;
-    # FIXME: auto-generated gid if not provided
     my $dn = $self->dn;
     my $res = $self->_client->delete("uid=$username,ou=People,$dn");
     return $self->_success($res);
