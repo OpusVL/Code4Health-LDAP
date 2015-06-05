@@ -19,5 +19,7 @@ ok $ldap->add_group('Person', 5000);
 ok $ldap->add_group('Verified', 5001);
 ok $ldap->add_group('Moderator', 5002);
 
+ok $ldap->add_user('colin', 'Colin Newell', 'Newell', 5000, 10000);
+
 done_testing;
 

@@ -7,5 +7,6 @@ echo Waiting for LDAP to boot
 sleep 5
 ldapadd -x -h $IP -D cn=admin,dc=code4health,dc=org -w devpassword -f initial_schemas.ldif
 echo installed posix schemas.
+echo LDAP_HOST=$IP LDAP_DN=dc=code4health,dc=org LDAP_PASSWORD=devpassword prove -l t/basic_setup.t
 LDAP_HOST=$IP LDAP_DN=dc=code4health,dc=org LDAP_PASSWORD=devpassword prove -l t/basic_setup.t
 

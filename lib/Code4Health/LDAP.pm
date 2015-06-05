@@ -78,8 +78,25 @@ sub add_user
 {
     my $self = shift;
     my $username = shift;
-    my $data = shift;
+    my $fullname = shift;
+    my $surname = shift;
+    my $group_id = shift;
+    my $uid = shift;
 
+    my $dn = $self->dn;
+    my $res = $self->_client->add("uid=$username,ou=Groups,$dn",
+        attrs => [
+            cn => $fullname,
+            displayName => $fullname,
+            gidNumber => $group_id,
+            uidNumber => $uid,
+            uid => $username,
+            sn => $surname,
+            homeDirectory => '/tmp', # FIXME: this seems ugly
+            objectClass => [qw/posixAccount inetOrgPerson/],
+        ]
+    );
+    return $self->_success($res);
 }
 
 =head2 add_group
