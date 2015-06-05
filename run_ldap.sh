@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CID=`sudo docker run -e LDAP_ORGANISATION="Code 4 Health" -e LDAP_DOMAIN="code4health.org" -e LDAP_ADMIN_PASSWORD="devpassword" -d osixia/openldap`
+CID=`sudo docker run -e LDAP_ORGANISATION="Code 4 Health" -e LDAP_DOMAIN="code4health.org" -e LDAP_ADMIN_PASSWORD="devpassword" -d osixia/openldap:0.10.1`
 IP=`sudo docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CID`
 echo $CID - $IP
 echo Waiting for LDAP to boot

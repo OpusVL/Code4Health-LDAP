@@ -3,6 +3,7 @@ package Code4Health::LDAP;
 use Moo;
 use Types::Standard -types;
 use Net::LDAP;
+use Net::LDAP::Util qw/escape_dn_value/;
 use failures qw/code4health::ldap/;
 use namespace::clean;
 
@@ -80,17 +81,19 @@ sub add_user
     my $username = shift;
     my $fullname = shift;
     my $surname = shift;
+    my $password = shift;
     my $group_id = shift;
     my $uid = shift;
 
     my $dn = $self->dn;
-    my $res = $self->_client->add("uid=$username,ou=Groups,$dn",
+    my $res = $self->_client->add("uid=$username,ou=People,$dn",
         attrs => [
             cn => $fullname,
             displayName => $fullname,
             gidNumber => $group_id,
             uidNumber => $uid,
             uid => $username,
+            userPassword => $password,
             sn => $surname,
             homeDirectory => '/tmp', # FIXME: this seems ugly
             objectClass => [qw/posixAccount inetOrgPerson/],
@@ -131,6 +134,51 @@ sub add_group
         ]
     );
     return $self->_success($res);
+}
+
+=head2 remove_user
+
+Remove a user.
+
+    $ldap->remove_user($username);
+
+=cut
+
+sub remove_user
+{
+    my $self = shift;
+    my $username = shift;
+    # FIXME: auto-generated gid if not provided
+    my $dn = $self->dn;
+    my $res = $self->_client->delete("uid=$username,ou=People,$dn");
+    return $self->_success($res);
+}
+
+=head2 authenticate
+
+Authenticate a user.
+
+    $ldap->authenticate($username, $password);
+
+=cut
+
+sub authenticate
+{
+    my $self = shift;
+    my $username = shift;
+    my $password = shift;
+
+    my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
+    my $query = sprintf("(uid=%s)", escape_dn_value($username));
+    $DB::single = 1;
+    my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, filter => $query);
+    for my $entry ($mesg->entries)
+    {
+        my $login = $ldap->bind($entry->dn, password => $password);
+        return $self->_success($login);
+    }
+    # user not found
+    return 0;
 }
 
 =head1 AUTHOR

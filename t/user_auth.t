@@ -14,11 +14,12 @@ my $ldap = Code4Health::LDAP->new({
     user => $ENV{LDAP_USER} || 'admin',
     password => $ENV{LDAP_PASSWORD},
 });
-ok $ldap->add_group('Person', 5000);
-ok $ldap->add_group('Verified', 5001);
-ok $ldap->add_group('Moderator', 5002);
 
-ok $ldap->add_user('colin', 'Colin Newell', 'Newell', 'insecure', 5000, 10000);
+my $username = 'test-auth';
+my $password = 'AuthTest';
+
+ok $ldap->add_user($username, 'Colin Newell', 'Newell', $password, 5000, 10000), 'Create user';
+ok $ldap->authenticate($username, $password), 'Authenticate';
+ok $ldap->remove_user($username), 'Remove user';
 
 done_testing;
-
