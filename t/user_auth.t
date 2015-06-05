@@ -19,7 +19,7 @@ my $username = 'test-auth';
 my $password = 'testpassword';
 
 ok $ldap->add_user($username, 'Colin Newell', 'Newell', $password, 5000, 10000), 'Create user';
-ok $ldap->authenticate($username, 'testpassword'), 'Authenticate';
+ok $ldap->authenticate($username, $password), 'Authenticate';
 ok $ldap->remove_user($username), 'Remove user';
 
 done_testing;
