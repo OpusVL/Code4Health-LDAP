@@ -155,6 +155,30 @@ sub remove_user
     return $self->_success($res);
 }
 
+# sub get_user_info
+# {
+# }
+# 
+
+=head2 set_password
+
+Sets the users password.
+
+    $ldap->set_password($user, $newpassword);
+
+=cut
+
+sub set_password
+{
+    my $self = shift;
+    my $username = shift;
+    my $new_password = shift;
+    my $dn = $self->dn;
+    my $res = $self->_client->modify("uid=$username,ou=People,$dn", 
+        replace => { userPassword => $new_password });
+    return $self->_success($res);
+}
+
 =head2 authenticate
 
 Authenticate a user.
