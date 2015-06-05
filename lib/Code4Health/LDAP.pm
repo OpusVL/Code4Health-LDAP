@@ -138,6 +138,33 @@ sub add_group
     return $self->_success($res);
 }
 
+sub add_to_group
+{
+    my $self = shift;
+    my $group = shift;
+    my $uid = shift;
+    my $dn = $self->dn;
+    my $res = $self->_client->modify("cn=$group,ou=Groups,$dn",
+        add => {
+            memberUid =>  [$uid]
+        }
+    );
+    return $self->_success($res);
+}
+
+sub remove_from_group
+{
+    my $self = shift;
+    my $group = shift;
+    my $uid = shift;
+    my $dn = $self->dn;
+    my $res = $self->_client->modify("cn=$group,ou=Groups,$dn",
+        delete => {
+            memberUid =>  [$uid]
+        }
+    );
+    return $self->_success($res);
+}
 =head2 remove_user
 
 Remove a user.
@@ -152,6 +179,13 @@ sub remove_user
     my $username = shift;
     my $dn = $self->dn;
     my $res = $self->_client->delete("uid=$username,ou=People,$dn");
+    my $query = sprintf("(memberUid=%s)", escape_dn_value($username));
+    my $groups = $self->_client->search(base => 'ou=Groups,' . $self->dn, filter => $query);
+    for my $group ($groups->entries)
+    {
+        # remove from the group.
+        $self->remove_from_group($group, $username);
+    }
     return $self->_success($res);
 }
 
