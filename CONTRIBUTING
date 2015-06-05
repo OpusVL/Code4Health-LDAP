@@ -1,0 +1,18 @@
+This module uses Dist::Zilla for it's build system.
+
+In order to develop minor changes with this module you shouldn't 
+need to install Dist::Zilla however.  You should be able to run
+cpanm --installdeps . as usual.  Likewise prove -l t should also
+work fine.
+
+If you need to produce a release you will require Dist::Zilla.
+
+$ dzil authordeps --missing | cpanm
+$ dzil listdeps --missing | cpanm
+$ dzil test
+$ dzil smoke
+$ dzil build 
+
+Note that dependencies are added to dist.ini.  Then run dzil test
+to trigger an update of the cpanfile.  The dist.ini is authoratitive,
+we provide cpanfile so that cpanm continues to work out of the box.
