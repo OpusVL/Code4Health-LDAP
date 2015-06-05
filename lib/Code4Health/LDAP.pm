@@ -1,6 +1,10 @@
 package Code4Health::LDAP;
 
 use Moo;
+use Types::Standard -types;
+use Net::LDAP;
+use failures qw/code4health::ldap/;
+use namespace::clean;
 
 =head1 NAME
 
@@ -14,6 +18,19 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+has host => (is => 'ro', isa => Str, required => 1);
+has dn => (is => 'ro', isa => Str, required => 1);
+has password => (is => 'ro', isa => Str, required => 1);
+
+has _client => (is => 'ro', lazy => 1, builder => '_build_client');
+
+sub _build_client
+{
+    my $self = shift;
+    my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
+    $ldap->bind($self->dn, { password => $self->password });
+    return $ldap;
+}
 
 =head1 SYNOPSIS
 
@@ -25,7 +42,35 @@ This module will allow access to users and groups within LDAP.
     $ldap->add_user('test');
     ...
 
+=head1 ATTRIBUTES
+
+=head2 host
+
+Hostname of the ldap server.
+
+=head2 dn
+
+dn to bind to when connecting, normally something like 
+
+  cn=admin,dc=code4health,dc=org
+
+=head2 password
+
+The password for the user you're trying to bind to.
+
 =head1 METHODS
+
+=head2 add_user
+
+=cut
+
+sub add_user
+{
+    my $self = shift;
+    my $username = shift;
+    my $data = shift;
+
+}
 
 =head1 AUTHOR
 
