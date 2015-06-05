@@ -16,6 +16,8 @@ my $ldap = Code4Health::LDAP->new({
     password => $ENV{LDAP_PASSWORD},
 });
 ok $ldap->add_group('Person', 5000);
+ok $ldap->add_group('Verified', 5001);
+ok $ldap->add_group('Moderator', 5002);
 
 done_testing;
 
