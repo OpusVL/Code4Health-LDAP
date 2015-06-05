@@ -16,10 +16,10 @@ my $ldap = Code4Health::LDAP->new({
 });
 
 my $username = 'test-auth';
-my $password = 'AuthTest';
+my $password = '{crypt}$6$Wc02SrwP$Rj.9wkIfy0cajCEr7SoS7CKklopRemPiEX3yKjcpV70Ui1t/zgTTw2PwOjFJDpcZyLiax5Zl83NrvOKsidBTU1';
 
 ok $ldap->add_user($username, 'Colin Newell', 'Newell', $password, 5000, 10000), 'Create user';
-ok $ldap->authenticate($username, $password), 'Authenticate';
+ok $ldap->authenticate($username, 'testpassword'), 'Authenticate';
 ok $ldap->remove_user($username), 'Remove user';
 
 done_testing;

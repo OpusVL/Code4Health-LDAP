@@ -170,7 +170,6 @@ sub authenticate
 
     my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
     my $query = sprintf("(uid=%s)", escape_dn_value($username));
-    $DB::single = 1;
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, filter => $query);
     for my $entry ($mesg->entries)
     {
