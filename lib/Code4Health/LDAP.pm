@@ -85,6 +85,8 @@ sub add_user
     my $group_id = shift;
     my $uid = shift;
 
+    my $salt = join('',map { ('a' .. 'z','A' .. 'Z', 0 .. 9)[rand (26*2)+10] } 0..15);
+    my $hash = "{crypt}" . crypt($password,"\$6\$$salt\$");
     my $dn = $self->dn;
     my $res = $self->_client->add("uid=$username,ou=People,$dn",
         attrs => [
@@ -93,7 +95,7 @@ sub add_user
             gidNumber => $group_id,
             uidNumber => $uid,
             uid => $username,
-            userPassword => $password,
+            userPassword => $hash,
             sn => $surname,
             homeDirectory => '/tmp', # FIXME: this seems ugly
             objectClass => [qw/posixAccount inetOrgPerson/],

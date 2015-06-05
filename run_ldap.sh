@@ -9,4 +9,5 @@ ldapadd -x -h $IP -D cn=admin,dc=code4health,dc=org -w devpassword -f initial_sc
 echo installed posix schemas.
 echo LDAP_HOST=$IP LDAP_DN=dc=code4health,dc=org LDAP_PASSWORD=devpassword prove -l t/basic_setup.t
 LDAP_HOST=$IP LDAP_DN=dc=code4health,dc=org LDAP_PASSWORD=devpassword prove -l t/basic_setup.t
-
+echo ldapsearch -x -h $IP -b dc=code4health,dc=org -D "cn=admin,dc=code4health,dc=org" -w devpassword
+ldapsearch -x -h $IP -b dc=code4health,dc=org -D "cn=admin,dc=code4health,dc=org" -w devpassword
