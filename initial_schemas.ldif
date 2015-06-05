@@ -1,0 +1,8 @@
+dn: ou=People,dc=code4health,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=code4health,dc=org
+objectClass: organizationalUnit
+ou: Groups
+

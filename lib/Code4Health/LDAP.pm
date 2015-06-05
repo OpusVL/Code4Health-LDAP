@@ -20,6 +20,7 @@ our $VERSION = '0.01';
 
 has host => (is => 'ro', isa => Str, required => 1);
 has dn => (is => 'ro', isa => Str, required => 1);
+has user => (is => 'ro', isa => Str, default => 'admin');
 has password => (is => 'ro', isa => Str, required => 1);
 
 has _client => (is => 'ro', lazy => 1, builder => '_build_client');
@@ -28,7 +29,12 @@ sub _build_client
 {
     my $self = shift;
     my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
-    $ldap->bind($self->dn, { password => $self->password });
+    my $user = $self->user;
+    my $res = $ldap->bind("cn=$user," . $self->dn, password => $self->password);
+    if($res->is_error)
+    {
+        failure::code4health::ldap->throw($res->error);
+    }
     return $ldap;
 }
 
@@ -52,7 +58,11 @@ Hostname of the ldap server.
 
 dn to bind to when connecting, normally something like 
 
-  cn=admin,dc=code4health,dc=org
+  dc=code4health,dc=org
+
+=head2 user
+
+Defaulted to admin
 
 =head2 password
 
@@ -70,6 +80,40 @@ sub add_user
     my $username = shift;
     my $data = shift;
 
+}
+
+=head2 add_group
+
+Adds a group.
+
+=cut
+
+sub _success
+{
+    my $self = shift;
+    my $res = shift;
+    if($res->is_error)
+    {
+        failure::code4health::ldap->throw($res->error);
+    }
+    return 1;
+}
+
+sub add_group
+{
+    my $self = shift;
+    my $name = shift;
+    my $gid = shift;
+    # FIXME: auto-generated gid if not provided
+    my $dn = $self->dn;
+    my $res = $self->_client->add("cn=$name,ou=Groups,$dn",
+        attrs => [
+            cn => $name,
+            gidNumber => $gid,
+            objectClass => 'posixGroup',
+        ]
+    );
+    return $self->_success($res);
 }
 
 =head1 AUTHOR
