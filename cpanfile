@@ -1,3 +1,4 @@
+requires "Net::LDAP" => "0";
 requires "perl" => "5.006";
 
 on 'build' => sub {
