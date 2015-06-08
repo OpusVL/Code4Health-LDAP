@@ -73,6 +73,10 @@ The password for the user you're trying to bind to.
 
 =head2 add_user
 
+Add a user,
+
+    $ldap->add_user('username', 'Full Name', 'Surname', 'password', groupIdNumber, UidNumber);
+
 =cut
 
 sub add_user
@@ -138,6 +142,15 @@ sub add_group
     return $self->_success($res);
 }
 
+=head2 add_to_group
+
+Adds a user to a group.  Note that it is the username that is passed
+to the function, not the user id number.
+
+    $ldap->add_to_group('Verified', 'col1');
+
+=cut
+
 sub add_to_group
 {
     my $self = shift;
@@ -151,6 +164,14 @@ sub add_to_group
     );
     return $self->_success($res);
 }
+
+=head2 remove_from_group
+
+Removes a user from a group.
+
+    $ldap->remove_from_group('Moderator', 'col1');
+
+=cut
 
 sub remove_from_group
 {
@@ -174,6 +195,7 @@ sub _remove_from_group
     );
     return $self->_success($res);
 }
+
 =head2 remove_user
 
 Remove a user.
