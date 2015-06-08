@@ -210,8 +210,7 @@ sub remove_user
     my $username = shift;
     my $dn = $self->dn;
     my $res = $self->_client->delete("uid=$username,ou=People,$dn");
-    my $query = sprintf("(memberUid=%s)", escape_dn_value($username));
-    my $groups = $self->_client->search(base => 'ou=Groups,' . $self->dn, filter => $query);
+    my $groups = $self->_groups_containing_user($username);
     for my $group ($groups->entries)
     {
         # remove from the group.
@@ -228,6 +227,16 @@ Returns user information.
 
 =cut
 
+sub _groups_containing_user
+{
+    my $self = shift;
+    my $username = shift;
+
+    my $query = sprintf("(memberUid=%s)", escape_dn_value($username));
+    my $groups = $self->_client->search(base => 'ou=Groups,' . $self->dn, filter => $query);
+    return $groups;
+}
+
 sub get_user_info
 {
     my $self = shift;
@@ -241,8 +250,8 @@ sub get_user_info
     {
         my %user_info = map { $_ => $entry->get_attribute($_) } @keys;
         # FIXME: get groups
-        my $query = sprintf("(memberUid=%s)", escape_dn_value($username));
-        my $groups = $self->_client->search(base => 'ou=Groups,' . $self->dn, filter => $query);
+
+        my $groups = $self->_groups_containing_user($username);
         my @groups;
         for my $group ($groups->entries)
         {
