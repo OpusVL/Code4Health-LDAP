@@ -20,6 +20,8 @@ ok $ldap->add_user('col2', 'Colin Newell', 'Newell', 'insecure', 5002, 10003), '
 ok $ldap->add_user('col3', 'Colin Newell', 'Newell', 'insecure', 5003, 10004), 'Create user';
 
 ok $ldap->add_to_group('Verified', 'col1');
+ok $ldap->add_to_group('Moderator', 'col1');
+ok $ldap->remove_from_group('Moderator', 'col1');
 
 for my $user (qw/col1 col2 col3/)
 {
