@@ -165,14 +165,6 @@ sub add_to_group
     return $self->_success($res);
 }
 
-=head2 remove_from_group
-
-Removes a user from a group.
-
-    $ldap->remove_from_group('Moderator', 'col1');
-
-=cut
-
 sub remove_from_group
 {
     my $self = shift;
@@ -195,14 +187,6 @@ sub _remove_from_group
     );
     return $self->_success($res);
 }
-
-=head2 remove_user
-
-Remove a user.
-
-    $ldap->remove_user($username);
-
-=cut
 
 sub remove_user
 {
@@ -290,6 +274,18 @@ sub set_password
 Authenticate a user.
 
     $ldap->authenticate($username, $password);
+
+=head2 remove_user
+
+Remove a user.
+
+    $ldap->remove_user($username);
+
+=head2 remove_from_group
+
+Removes a user from a group.
+
+    $ldap->remove_from_group('Moderator', 'col1');
 
 =cut
 
