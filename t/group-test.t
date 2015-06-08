@@ -19,8 +19,26 @@ ok $ldap->add_user('col1', 'Colin Newell', 'Newell', 'insecure', 5001, 10002), '
 ok $ldap->add_user('col2', 'Colin Newell', 'Newell', 'insecure', 5002, 10003), 'Create user';
 ok $ldap->add_user('col3', 'Colin Newell', 'Newell', 'insecure', 5003, 10004), 'Create user';
 
+
 ok $ldap->add_to_group('Verified', 'col1');
 ok $ldap->add_to_group('Moderator', 'col1');
+my $user_info = $ldap->get_user_info('col1');
+eq_or_diff $user_info, 
+{
+  'cn' => 'Colin Newell',
+  'displayName' => 'Colin Newell',
+  'gidNumber' => '5001',
+  'groups' => [
+    'Verified',
+    'Moderator'
+  ],
+  'homeDirectory' => '/tmp',
+  'sn' => 'Newell',
+  'uid' => 'col1',
+  'uidNumber' => '10002'
+};
+
+
 ok $ldap->remove_from_group('Moderator', 'col1');
 
 for my $user (qw/col1 col2 col3/)

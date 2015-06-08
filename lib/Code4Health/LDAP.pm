@@ -220,10 +220,42 @@ sub remove_user
     return $self->_success($res);
 }
 
-# sub get_user_info
-# {
-# }
-# 
+=head2 get_user_info
+
+Returns user information.
+
+    $ldap->get_user_info($username);
+
+=cut
+
+sub get_user_info
+{
+    my $self = shift;
+    my $username = shift;
+
+    my $query = sprintf("(uid=%s)", escape_dn_value($username));
+    my @keys = qw/cn displayName gidNumber uidNumber uid sn homeDirectory/;
+    my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, 
+                                      filter => $query, attrs => \@keys);
+    for my $entry ($mesg->entries)
+    {
+        my %user_info = map { $_ => $entry->get_attribute($_) } @keys;
+        # FIXME: get groups
+        my $query = sprintf("(memberUid=%s)", escape_dn_value($username));
+        my $groups = $self->_client->search(base => 'ou=Groups,' . $self->dn, filter => $query);
+        my @groups;
+        for my $group ($groups->entries)
+        {
+            push @groups, $group->get_attribute('cn');
+        }
+        $user_info{groups} = \@groups;
+        return \%user_info;
+    }
+    return undef;
+    # return user info
+    # and groups subscribed to
+}
+
 
 =head2 set_password
 
