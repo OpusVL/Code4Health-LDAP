@@ -158,7 +158,16 @@ sub remove_from_group
     my $group = shift;
     my $uid = shift;
     my $dn = $self->dn;
-    my $res = $self->_client->modify("cn=$group,ou=Groups,$dn",
+
+    return $self->_remove_from_group("cn=$group,ou=Groups,$dn", $uid);
+}
+
+sub _remove_from_group
+{
+    my $self = shift;
+    my $group_dn = shift;
+    my $uid = shift;
+    my $res = $self->_client->modify($group_dn,
         delete => {
             memberUid =>  [$uid]
         }
@@ -184,7 +193,7 @@ sub remove_user
     for my $group ($groups->entries)
     {
         # remove from the group.
-        $self->remove_from_group($group, $username);
+        $self->_remove_from_group($group->dn, $username);
     }
     return $self->_success($res);
 }

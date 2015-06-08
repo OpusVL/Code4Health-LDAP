@@ -15,11 +15,11 @@ my $ldap = Code4Health::LDAP->new({
     password => $ENV{LDAP_PASSWORD},
 });
 
-ok $ldap->add_user('col4', 'Colin Newell', 'Newell', 'insecure', 5001, 10002), 'Create user';
-ok $ldap->add_user('col5', 'Colin Newell', 'Newell', 'insecure', 5002, 10003), 'Create user';
-ok $ldap->add_user('col6', 'Colin Newell', 'Newell', 'insecure', 5003, 10004), 'Create user';
+ok $ldap->add_user('col1', 'Colin Newell', 'Newell', 'insecure', 5001, 10002), 'Create user';
+ok $ldap->add_user('col2', 'Colin Newell', 'Newell', 'insecure', 5002, 10003), 'Create user';
+ok $ldap->add_user('col3', 'Colin Newell', 'Newell', 'insecure', 5003, 10004), 'Create user';
 
-ok $ldap->add_to_group('Verified', 'col4');
+ok $ldap->add_to_group('Verified', 'col1');
 
 for my $user (qw/col1 col2 col3/)
 {
