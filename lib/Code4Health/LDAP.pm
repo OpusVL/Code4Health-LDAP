@@ -307,6 +307,21 @@ sub authenticate
     return 0;
 }
 
+sub ensure_uid_not_used
+{
+    my $self = shift;
+    my $uid = shift;
+    my $query = sprintf("(uidNumber=%s)", escape_dn_value($uid));
+    my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, 
+                                      filter => $query, attrs => [1.1]);
+    if($mesg->is_error)
+    {
+        failure::code4health::ldap->throw($mesg->error);
+    }
+    return $mesg->count == 0;
+}
+
+
 =head1 AUTHOR
 
 OpusVL, C<< <support at opusvl.com> >>
