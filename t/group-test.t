@@ -22,6 +22,7 @@ ok $ldap->add_user('col3', 'Colin Newell', 'Newell', 'insecure', 5003, 10004), '
 
 ok $ldap->add_to_group('Verified', 'col1');
 ok $ldap->add_to_group('Moderator', 'col1');
+explain $ldap->get_group_info('Verified');
 my $user_info = $ldap->get_user_info('col1');
 eq_or_diff $user_info, 
 {

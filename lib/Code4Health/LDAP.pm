@@ -117,12 +117,18 @@ Adds a group.
 sub _success
 {
     my $self = shift;
+    $self->_throw_if_error(@_);
+    return 1;
+}
+
+sub _throw_if_error
+{
+    my $self = shift;
     my $res = shift;
     if($res->is_error)
     {
         failure::code4health::ldap->throw($res->error);
     }
-    return 1;
 }
 
 sub add_group
@@ -209,6 +215,13 @@ Returns user information.
 
     $ldap->get_user_info($username);
 
+=head2 get_group_info
+
+Returns the gidNumber for the group.
+
+    $ldap->get_group_info($group);
+    # { gidNumber => 32131, cn => 'Person' }
+
 =cut
 
 sub _groups_containing_user
@@ -230,6 +243,7 @@ sub get_user_info
     my @keys = qw/cn displayName gidNumber uidNumber uid sn homeDirectory/;
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, 
                                       filter => $query, attrs => \@keys);
+    $self->_throw_if_error($mesg);
     for my $entry ($mesg->entries)
     {
         my %user_info = map { $_ => $entry->get_attribute($_) } @keys;
@@ -247,6 +261,24 @@ sub get_user_info
     return undef;
     # return user info
     # and groups subscribed to
+}
+
+sub get_group_info
+{
+    my $self = shift;
+    my $group = shift;
+
+    my $query = sprintf("(cn=%s)", escape_dn_value($group));
+    my @keys = qw/cn gidNumber/;
+    my $mesg = $self->_client->search(base => 'ou=Groups,' . $self->dn, 
+                                      filter => $query, attrs => \@keys);
+    $self->_throw_if_error($mesg);
+    for my $entry ($mesg->entries)
+    {
+        my %info = map { $_ => $entry->get_attribute($_) } @keys;
+        return \%info;
+    }
+    return undef;
 }
 
 
@@ -298,6 +330,7 @@ sub authenticate
     my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
     my $query = sprintf("(uid=%s)", escape_dn_value($username));
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, filter => $query);
+    $self->_throw_if_error($mesg);
     for my $entry ($mesg->entries)
     {
         my $login = $ldap->bind($entry->dn, password => $password);
@@ -322,10 +355,7 @@ sub ensure_uid_not_used
     my $query = sprintf("(uidNumber=%s)", escape_dn_value($uid));
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, 
                                       filter => $query, attrs => [1.1]);
-    if($mesg->is_error)
-    {
-        failure::code4health::ldap->throw($mesg->error);
-    }
+    $self->_throw_if_error($mesg);
     return $mesg->count == 0;
 }
 
