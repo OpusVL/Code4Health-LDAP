@@ -307,6 +307,14 @@ sub authenticate
     return 0;
 }
 
+=head2 ensure_uid_not_used
+
+Checks that the uidNumber is not in use.
+
+    $ldap->ensure_uid_not_used(10003);
+
+=cut
+
 sub ensure_uid_not_used
 {
     my $self = shift;
