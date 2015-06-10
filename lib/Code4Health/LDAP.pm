@@ -105,6 +105,7 @@ sub add_user
             objectClass => [qw/posixAccount inetOrgPerson/],
         ]
     );
+    $self->add_to_group('Person', $username);
     return $self->_success($res);
 }
 

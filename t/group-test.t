@@ -30,6 +30,7 @@ eq_or_diff $user_info,
   'displayName' => 'Colin Newell',
   'gidNumber' => '5001',
   'groups' => [
+    'Person',
     'Verified',
     'Moderator'
   ],
