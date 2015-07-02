@@ -89,6 +89,9 @@ sub add_user
     my $group_id = shift;
     my $uid = shift;
 
+    # These characters must be escaped. You can't just wrap it in quotes in the dn
+    $username =~ s/([,\\'+<>;"=])/\\$1/g;
+
     my $salt = join('',map { ('a' .. 'z','A' .. 'Z', 0 .. 9)[rand (26*2)+10] } 0..15);
     my $hash = "{crypt}" . crypt($password,"\$6\$$salt\$");
     my $dn = $self->dn;
