@@ -17,7 +17,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 has host => (is => 'ro', isa => Str, required => 1);
 has dn => (is => 'ro', isa => Str, required => 1);
