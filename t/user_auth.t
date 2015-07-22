@@ -24,7 +24,7 @@ ok ! $ldap->ensure_uid_not_used(10003);
 ok $ldap->authenticate($username, $password), 'Authenticate';
 ok $ldap->set_password($username, 'newpassword'), 'Set password';
 ok $ldap->authenticate($username, 'newpassword'), 'Authenticate again';
-throws_ok { $ldap->authenticate($username, $password) } 'failure::code4health::ldap', 'Fail to authenticate';
+throws_ok { $ldap->authenticate($username, $password) } 'failure::code4health::ldap::authenticationfailure', 'Fail to authenticate';
 ok $ldap->remove_user($username), 'Remove user';
 
 done_testing;

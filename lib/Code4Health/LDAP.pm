@@ -5,7 +5,11 @@ use Types::Standard -types;
 use Net::LDAP;
 use Net::LDAP::Util qw/escape_dn_value/;
 use Net::LDAP::Constant qw/LDAP_INVALID_CREDENTIALS/;
-use failures qw/code4health::ldap code4health::ldap::create/;
+use failures qw/
+    code4health::ldap 
+    code4health::ldap::create
+    code4health::ldap::authenticationfailure
+/;
 use Try::Tiny;
 use namespace::clean;
 
@@ -133,6 +137,10 @@ sub _throw_if_error
     my $res = shift;
     if($res->is_error)
     {
+        if ($res->code == LDAP_INVALID_CREDENTIALS) {
+            failure::code4health::ldap::authenticationfailure->throw($res->error);
+        }
+
         failure::code4health::ldap->throw($res->error);
     }
 }
@@ -338,20 +346,11 @@ sub authenticate
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, filter => $query);
     $self->_throw_if_error($mesg);
 
+    # There should be 0 or 1 iterations of this, or something is very wrong
     for my $entry ($mesg->entries)
     {
         my $login = $ldap->bind($entry->dn, password => $password);
-        my $success = try {
-            $self->_throw_if_error($login);
-        }
-        catch {
-            # Throws an error if the password is wrong. Catch this and consider
-            # it simply unsuccessful.
-            $login->code == LDAP_INVALID_CREDENTIALS and return 0;
-            $_->throw;
-        };
-
-        return $success if $success;
+        return $self->_success($login);
     }
     # user not found
     return 0;
