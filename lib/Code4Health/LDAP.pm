@@ -98,8 +98,7 @@ sub add_user
     # These characters must be escaped. You can't just wrap it in quotes in the dn
     $username =~ s/([,\\'+<>;"=])/\\$1/g;
 
-    my $salt = join('',map { ('a' .. 'z','A' .. 'Z', 0 .. 9)[rand (26*2)+10] } 0..15);
-    my $hash = "{crypt}" . crypt($password,"\$6\$$salt\$");
+    my $hash = $self->_hashed_password($password);
     my $dn = $self->dn;
     my $res = $self->_client->add("uid=$username,ou=People,$dn",
         attrs => [
@@ -116,6 +115,14 @@ sub add_user
     );
     $self->add_to_group('Person', $username);
     return $self->_success($res);
+}
+
+sub _hashed_password {
+    my $self = shift;
+    my $password = shift;
+    my $salt = join('',map { ('a' .. 'z','A' .. 'Z', 0 .. 9)[rand (26*2)+10] } 0..15);
+
+    return "{crypt}" . crypt($password,"\$6\$$salt\$");
 }
 
 =head2 add_group
@@ -311,7 +318,7 @@ sub set_password
     my $new_password = shift;
     my $dn = $self->dn;
     my $res = $self->_client->modify("uid=$username,ou=People,$dn", 
-        replace => { userPassword => $new_password });
+        replace => { userPassword => $self->_hashed_password($new_password) });
     return $self->_success($res);
 }
 
