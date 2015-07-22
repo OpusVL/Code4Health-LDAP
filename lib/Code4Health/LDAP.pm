@@ -4,7 +4,9 @@ use Moo;
 use Types::Standard -types;
 use Net::LDAP;
 use Net::LDAP::Util qw/escape_dn_value/;
-use failures qw/code4health::ldap/;
+use Net::LDAP::Constant qw/LDAP_INVALID_CREDENTIALS/;
+use failures qw/code4health::ldap code4health::ldap::create/;
+use Try::Tiny;
 use namespace::clean;
 
 =head1 NAME
@@ -331,14 +333,25 @@ sub authenticate
     my $username = shift;
     my $password = shift;
 
-    my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap->throw($@);
+    my $ldap = Net::LDAP->new($self->host) || failure::code4health::ldap::create->throw($@);
     my $query = sprintf("(uid=%s)", escape_dn_value($username));
     my $mesg = $self->_client->search(base => 'ou=People,' . $self->dn, filter => $query);
     $self->_throw_if_error($mesg);
+
     for my $entry ($mesg->entries)
     {
         my $login = $ldap->bind($entry->dn, password => $password);
-        return $self->_success($login);
+        my $success = try {
+            $self->_throw_if_error($login);
+        }
+        catch {
+            # Throws an error if the password is wrong. Catch this and consider
+            # it simply unsuccessful.
+            $login->code == LDAP_INVALID_CREDENTIALS and return 0;
+            $_->throw;
+        };
+
+        return $success if $success;
     }
     # user not found
     return 0;
