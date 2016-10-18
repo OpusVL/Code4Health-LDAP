@@ -18,13 +18,9 @@ use namespace::clean;
 
 Code4Health::LDAP - Wrapper around LDAP
 
-=head1 VERSION
-
-Version 0.01
-
 =cut
 
-our $VERSION = '0.05';
+our $VERSION = '0.07';
 
 has host => (is => 'ro', isa => Str, required => 1);
 has dn => (is => 'ro', isa => Str, required => 1);
@@ -399,13 +395,6 @@ automatically be notified of progress on your bug as I make changes.
 
 
 =head1 ACKNOWLEDGEMENTS
-
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2015 OpusVL.
-
-This software is licensed according to the "IP Assignment Schedule" provided with the development project.
 
 
 =cut
