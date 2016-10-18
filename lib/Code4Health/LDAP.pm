@@ -4,11 +4,12 @@ use Moo;
 use Types::Standard -types;
 use Net::LDAP;
 use Net::LDAP::Util qw/escape_dn_value/;
-use Net::LDAP::Constant qw/LDAP_INVALID_CREDENTIALS/;
+use Net::LDAP::Constant qw/LDAP_INVALID_CREDENTIALS LDAP_NO_SUCH_OBJECT/;
 use failures qw/
     code4health::ldap 
     code4health::ldap::create
     code4health::ldap::authenticationfailure
+    code4health::ldap::noobject
 /;
 use Try::Tiny;
 use namespace::clean;
