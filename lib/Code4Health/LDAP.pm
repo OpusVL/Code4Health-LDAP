@@ -147,6 +147,9 @@ sub _throw_if_error
         if ($res->code == LDAP_INVALID_CREDENTIALS) {
             failure::code4health::ldap::authenticationfailure->throw($res->error);
         }
+        if ($res->code == LDAP_NO_SUCH_OBJECT) {
+            failure::code4health::ldap::noobject->throw($res->error);
+        }
 
         failure::code4health::ldap->throw($res->error);
     }
