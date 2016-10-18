@@ -1,5 +1,11 @@
 Revision history for Code4Health-LDAP
 
+{{ $NEXT }}
+
+0.06      2016-10-18 16:32:35+01:00 Europe/London
+
+        Allow filtering out of no such object errors
+
 0.01    2015-06-05
         First version, released on an unsuspecting world.
 
