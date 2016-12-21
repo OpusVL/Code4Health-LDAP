@@ -279,7 +279,7 @@ sub get_user_info
         $user_info{groups} = \@groups;
         return \%user_info;
     }
-    return undef;
+    return {};
     # return user info
     # and groups subscribed to
 }
@@ -299,7 +299,7 @@ sub get_group_info
         my %info = map { $_ => $entry->get_attribute($_) } @keys;
         return \%info;
     }
-    return undef;
+    return {};
 }
 
 
