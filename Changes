@@ -2,10 +2,14 @@ Revision history for Code4Health-LDAP
 
 {{ $NEXT }}
 
+0.07      2016-12-22 12:50:55+00:00 Europe/London
+
+    - Avoid throwing exceptions in non-exceptional circumstances
+
 0.06      2016-10-18 16:32:35+01:00 Europe/London
 
-        Allow filtering out of no such object errors
+    - Allow filtering out of no such object errors
 
 0.01    2015-06-05
-        First version, released on an unsuspecting world.
+    - First version, released on an unsuspecting world.
 
