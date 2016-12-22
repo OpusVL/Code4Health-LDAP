@@ -20,7 +20,7 @@ Code4Health::LDAP - Wrapper around LDAP
 
 =cut
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 has host => (is => 'ro', isa => Str, required => 1);
 has dn => (is => 'ro', isa => Str, required => 1);
