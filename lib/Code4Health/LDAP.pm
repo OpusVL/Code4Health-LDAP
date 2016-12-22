@@ -267,7 +267,7 @@ sub get_user_info
     $self->_throw_if_error($mesg);
     for my $entry ($mesg->entries)
     {
-        my %user_info = map { $_ => $entry->get_attribute($_) } @keys;
+        my %user_info = map { $_ => scalar $entry->get_attribute($_) } @keys;
         # FIXME: get groups
 
         my $groups = $self->_groups_containing_user($username);
